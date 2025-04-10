@@ -17,8 +17,20 @@ export default function SimuladorPejotizacao() {
     const previdencia = economiaMensal * 0.5;
     const recebivelPJ = custoPJ - previdencia;
 
-    const contabilidade = 369 * meses * colaboradores;
-    const impostos = (recebivelPJ / colaboradores) * 0.06 * meses * colaboradores;
+    const contabilidadeMensal = 369;
+    const impostoMensal = (recebivelPJ / colaboradores) * 0.06;
+
+    const ganhoPJMensal = (recebivelPJ / colaboradores) - impostoMensal - contabilidadeMensal + (previdencia / colaboradores);
+
+    const inss = Math.min(salario * 0.14, 908.86);
+    const baseIRRF = salario - inss;
+    const irrf = baseIRRF > 4664.68 ? (baseIRRF * 0.275 - 884.96) : 0;
+    const salarioLiquidoCLT = salario - inss - irrf;
+
+    const ganhoMensalExtra = ganhoPJMensal - salarioLiquidoCLT;
+
+    const contabilidade = contabilidadeMensal * meses * colaboradores;
+    const impostos = impostoMensal * meses * colaboradores;
 
     const ganhoPJ = (recebivelPJ * meses + previdencia * meses) - contabilidade - impostos;
 
@@ -37,7 +49,8 @@ export default function SimuladorPejotizacao() {
 
     setResultado({
       custoCLT, custoPJ, economiaMensal, economiaTotal,
-      economiaLiquida, ganhoPJ, risco, seguro, totalAcao
+      economiaLiquida, ganhoPJ, risco, seguro, totalAcao,
+      salarioLiquidoCLT, ganhoPJMensal, ganhoMensalExtra
     });
   };
 
@@ -88,8 +101,10 @@ export default function SimuladorPejotizacao() {
           </div>
 
           <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-2">👤 Visão do Colaborador</h2>
-            <p><strong>Ganho PJ total:</strong> {f(resultado.ganhoPJ)}</p>
+            <h2 className="text-xl font-semibold mb-2">👤 Visão do Colaborador (1 colaborador)</h2>
+            <p><strong>Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+            <p><strong>Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+            <p><strong>Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
           </div>
 
           <div className="bg-white p-4 rounded shadow">
