@@ -1,0 +1,1 @@
+export default function SimuladorPejotizacao() { return <div>Simulador</div> }
