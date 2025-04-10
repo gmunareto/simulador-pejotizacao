@@ -47,10 +47,21 @@ export default function SimuladorPejotizacao() {
 
     const economiaLiquida = economiaTotal - seguro;
 
+    // Aposentadoria estimativas
+    const contribuicaoINSSMensal = Math.min(salario * 0.14, 908.86);
+    const tempoContribuicao = 35;
+    const totalINSS = contribuicaoINSSMensal * 12 * tempoContribuicao;
+    const estimativaAposentadoriaINSS = 6500;
+
+    const contribuicaoPrevidenciaPrivada = (previdencia / colaboradores);
+    const acumuladoPrivado = Array.from({ length: tempoContribuicao * 12 }).reduce((acc) => acc * 1.005 + contribuicaoPrevidenciaPrivada, 0);
+
     setResultado({
       custoCLT, custoPJ, economiaMensal, economiaTotal,
       economiaLiquida, ganhoPJ, risco, seguro, totalAcao,
-      salarioLiquidoCLT, ganhoPJMensal, ganhoMensalExtra
+      salarioLiquidoCLT, ganhoPJMensal, ganhoMensalExtra,
+      contribuicaoINSSMensal, totalINSS, estimativaAposentadoriaINSS,
+      contribuicaoPrevidenciaPrivada, acumuladoPrivado
     });
   };
 
@@ -101,13 +112,6 @@ export default function SimuladorPejotizacao() {
           </div>
 
           <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-semibold mb-2">👤 Visão do Colaborador (1 colaborador)</h2>
-            <p><strong>Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-            <p><strong>Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-            <p><strong>Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
-          </div>
-
-          <div className="bg-white p-4 rounded shadow">
             <h2 className="text-xl font-semibold mb-4">🛡️ Gráfico de Risco</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dadosGrafico}>
@@ -122,6 +126,29 @@ export default function SimuladorPejotizacao() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white p-4 rounded shadow">
+            <h2 className="text-xl font-semibold mb-2">👤 Visão do Colaborador (1 colaborador)</h2>
+            <p><strong>Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+            <p><strong>Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+            <p><strong>Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
+
+            <div className="mt-4">
+              <h3 className="text-lg font-medium">📊 Composição do ganho PJ:</h3>
+              <p><strong>Receita bruta:</strong> {f(salario)}</p>
+              <p><strong>Impostos (6%):</strong> {f((salario * 0.06))}</p>
+              <p><strong>Contabilidade:</strong> {f(369)}</p>
+              <p><strong>Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
+              <p><strong>Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="text-lg font-medium">🏦 Comparativo de Aposentadoria</h3>
+              <p><strong>CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
+              <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+              <p><strong>PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
+            </div>
           </div>
         </div>
       )}
