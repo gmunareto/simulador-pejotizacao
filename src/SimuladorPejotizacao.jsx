@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
 
 export default function SimuladorPejotizacao() {
   const [salario, setSalario] = useState(10000);
@@ -42,6 +42,12 @@ export default function SimuladorPejotizacao() {
   };
 
   const f = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  const dadosGrafico = resultado ? [
+    { name: 'Valor da Ação', valor: resultado.totalAcao, cor: '#ef4444' },
+    { name: 'Risco Estimado (68%)', valor: resultado.risco, cor: '#facc15' },
+    { name: 'Seguro (15%)', valor: resultado.seguro, cor: '#22c55e' }
+  ] : [];
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
@@ -89,16 +95,16 @@ export default function SimuladorPejotizacao() {
           <div className="bg-white p-4 rounded shadow">
             <h2 className="text-xl font-semibold mb-4">🛡️ Gráfico de Risco</h2>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={[
-                { name: 'Valor da Ação', valor: resultado.totalAcao },
-                { name: 'Risco Estimado (68%)', valor: resultado.risco },
-                { name: 'Seguro (15%)', valor: resultado.seguro }
-              ]}>
+              <BarChart data={dadosGrafico}>
                 <XAxis dataKey="name" />
                 <YAxis tickFormatter={f} />
                 <Tooltip formatter={(v) => f(v)} />
                 <Legend />
-                <Bar dataKey="valor" fill="#3b82f6" />
+                <Bar dataKey="valor">
+                  {dadosGrafico.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.cor} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
