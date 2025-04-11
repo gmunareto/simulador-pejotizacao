@@ -9,7 +9,6 @@ export default function SimuladorPejotizacao() {
 
   const calcular = () => {
     const totalSalario = salario * colaboradores;
-
     const custoCLT = totalSalario * 1.5;
     const custoPJ = totalSalario * 1.2;
     const economiaMensal = custoCLT - custoPJ;
@@ -44,7 +43,6 @@ export default function SimuladorPejotizacao() {
     const totalAcao = inssPatronal + fgts + ferias + decimo + multa + avisoPrevio;
     const risco = totalAcao * 0.68;
     const seguro = risco * 0.15;
-
     const economiaLiquida = economiaTotal - seguro;
 
     const contribuicaoINSSMensal = Math.min(salario * 0.14, 908.86);
@@ -53,14 +51,15 @@ export default function SimuladorPejotizacao() {
     const estimativaAposentadoriaINSS = 6500;
 
     const contribuicaoPrevidenciaPrivada = (previdencia / colaboradores);
-    const acumuladoPrivado = Array.from({ length: tempoContribuicao * 12 }).reduce((acc) => acc * 1.005 + contribuicaoPrevidenciaPrivada, 0);
+    const acumuladoPrivado = Array.from({ length: tempoContribuicao * 12 }).reduce(
+      (acc) => acc * 1.005 + contribuicaoPrevidenciaPrivada, 0
+    );
 
     setResultado({
-      custoCLT, custoPJ, economiaMensal, economiaTotal,
-      economiaLiquida, ganhoPJ, risco, seguro, totalAcao,
-      salarioLiquidoCLT, ganhoPJMensal, ganhoMensalExtra,
-      contribuicaoINSSMensal, totalINSS, estimativaAposentadoriaINSS,
-      contribuicaoPrevidenciaPrivada, acumuladoPrivado
+      custoCLT, custoPJ, economiaMensal, economiaTotal, economiaLiquida,
+      ganhoPJ, risco, seguro, totalAcao, salarioLiquidoCLT, ganhoPJMensal,
+      ganhoMensalExtra, contribuicaoINSSMensal, totalINSS,
+      estimativaAposentadoriaINSS, contribuicaoPrevidenciaPrivada, acumuladoPrivado
     });
   };
 
@@ -94,42 +93,30 @@ export default function SimuladorPejotizacao() {
         </div>
       </div>
 
-      <button onClick={calcular}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+      <button onClick={calcular} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
         Calcular
       </button>
 
       {resultado && (
-        <div className="bg-white p-4 rounded shadow text-base">
-  <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
+        <div className="space-y-6 mt-6">
+          
+          {/* Visão do Colaborador */}
+          <div className="bg-white p-4 rounded shadow text-base">
+            <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
+            <p className="text-lg"><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+            <p className="text-lg"><strong>💸 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+            <p className="text-lg"><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
 
-  <p className="text-lg"><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-  <p className="text-lg"><strong>💸 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-  <p className="text-lg"><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
-
-  <div className="mt-4">
-    <h3 className="text-xl font-semibold mb-2">📊 Composição do ganho PJ:</h3>
-    <p><strong>📥 Receita bruta:</strong> {f(salario)}</p>
-    <p><strong>📤 Impostos (6%):</strong> {f(salario * 0.06)}</p>
-    <p><strong>📑 Contabilidade:</strong> {f(369)}</p>
-    <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
-    <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
-    
-    <p className="text-base text-green-700 mt-3">💬 "Transforme tributos em salário no seu bolso."</p>
-    <p className="text-base text-green-700">💬 "Ganhe até 28% a mais por mês sem depender do governo."</p>
-  </div>
-
-  <div className="mt-6">
-    <h3 className="text-xl font-semibold mb-2">📚 Comparativo de Aposentadoria</h3>
-    <p><strong>📉 CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
-    <p><strong>📊 Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-    <p><strong>🏦 PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
-
-    <p className="text-base text-blue-700 mt-3">💬 "Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa."</p>
-    <p className="text-base text-blue-700">💬 "Invista o que antes ia para o governo em sua aposentadoria."</p>
-  </div>
-</div>
-
+            <div className="mt-4">
+              <h3 className="text-xl font-semibold mb-2">📊 Composição do ganho PJ:</h3>
+              <p><strong>📥 Receita bruta:</strong> {f(salario)}</p>
+              <p><strong>📤 Impostos (6%):</strong> {f(salario * 0.06)}</p>
+              <p><strong>📑 Contabilidade:</strong> {f(369)}</p>
+              <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
+              <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
+              <p className="text-base text-green-700 mt-3">💬 "Transforme tributos em salário no seu bolso."</p>
+              <p className="text-base text-green-700">💬 "Ganhe até 28% a mais por mês sem depender do governo."</p>
+            </div>
 
             <div className="mt-6">
               <h3 className="text-xl font-semibold mb-2">📚 Comparativo de Aposentadoria</h3>
@@ -140,9 +127,26 @@ export default function SimuladorPejotizacao() {
               <p className="text-base text-blue-700">💬 "Invista o que antes ia para o governo em sua aposentadoria."</p>
             </div>
           </div>
+
+          {/* Gráfico de Risco */}
+          <div className="bg-white p-4 rounded shadow">
+            <h2 className="text-xl font-bold mb-4">🛡️ Gráfico de Risco</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={dadosGrafico}>
+                <XAxis dataKey="name" />
+                <Tooltip formatter={(v) => f(v)} />
+                <Legend />
+                <Bar dataKey="valor">
+                  {dadosGrafico.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.cor} />
+                  ))}
+                  <LabelList dataKey="valor" content={({ value }) => f(value)} position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
