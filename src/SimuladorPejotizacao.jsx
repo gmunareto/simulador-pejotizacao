@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Legend, Cell, LabelList } from "recharts";
-import html2pdf from "html2pdf.js";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function SimuladorPejotizacao() {
   const [salario, setSalario] = useState(10000);
@@ -20,7 +21,6 @@ export default function SimuladorPejotizacao() {
 
     const contabilidadeMensal = 369;
     const impostoMensal = (recebivelPJ / colaboradores) * 0.06;
-
     const ganhoPJMensal = (recebivelPJ / colaboradores) - impostoMensal - contabilidadeMensal + (previdencia / colaboradores);
 
     const inss = Math.min(salario * 0.14, 908.86);
@@ -29,10 +29,8 @@ export default function SimuladorPejotizacao() {
     const salarioLiquidoCLT = salario - inss - irrf;
 
     const ganhoMensalExtra = ganhoPJMensal - salarioLiquidoCLT;
-
     const contabilidade = contabilidadeMensal * meses * colaboradores;
     const impostos = impostoMensal * meses * colaboradores;
-
     const ganhoPJ = (recebivelPJ * meses + previdencia * meses) - contabilidade - impostos;
 
     const inssPatronal = totalSalario * meses * 0.20;
@@ -52,7 +50,7 @@ export default function SimuladorPejotizacao() {
     const totalINSS = contribuicaoINSSMensal * 12 * tempoContribuicao;
     const estimativaAposentadoriaINSS = 6500;
 
-    const contribuicaoPrevidenciaPrivada = (previdencia / colaboradores);
+    const contribuicaoPrevidenciaPrivada = previdencia / colaboradores;
     const acumuladoPrivado = Array.from({ length: tempoContribuicao * 12 }).reduce(
       (acc) => acc * 1.005 + contribuicaoPrevidenciaPrivada, 0
     );
@@ -66,14 +64,15 @@ export default function SimuladorPejotizacao() {
   };
 
   const gerarPDF = () => {
-    const opt = {
-      margin: 0.5,
-      filename: 'relatorio-simulador-pejotizacao.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    html2pdf().from(pdfRef.current).set(opt).save();
+    const input = pdfRef.current;
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save('relatorio-simulador.pdf');
+    });
   };
 
   const f = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -107,66 +106,6 @@ export default function SimuladorPejotizacao() {
 
       {resultado && (
         <>
-          <div className="space-y-6 mt-6" ref={pdfRef}>
-            {/* Visão da Empresa */}
-            <div className="bg-white p-4 rounded shadow text-base">
-              <h2 className="text-2xl font-bold mb-4">🏢 Visão da Empresa</h2>
-              <p className="text-lg"><strong>💰 Custo CLT:</strong> {f(resultado.custoCLT)}</p>
-              <p className="text-lg"><strong>💼 Custo PJ:</strong> {f(resultado.custoPJ)}</p>
-              <p className="text-lg"><strong>📉 Economia mensal:</strong> {f(resultado.economiaMensal)}</p>
-              <p className="text-lg"><strong>📆 Economia no período:</strong> {f(resultado.economiaTotal)}</p>
-              <p className="text-lg"><strong>🛡️ Custo estimado do seguro:</strong> {f(resultado.seguro)}</p>
-              <p className="text-lg font-semibold"><strong>📈 Economia líquida real:</strong> {f(resultado.economiaLiquida)}</p>
-            </div>
-
-            {/* Visão do Colaborador */}
-            <div className="bg-white p-4 rounded shadow text-base">
-              <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
-              <p className="text-lg"><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-              <p className="text-lg"><strong>💸 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-              <p className="text-lg"><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
-
-              <div className="mt-4">
-                <h3 className="text-xl font-semibold mb-2">📊 Composição do ganho PJ:</h3>
-                <p><strong>📥 Receita bruta:</strong> {f(salario)}</p>
-                <p><strong>📤 Impostos (6%):</strong> {f(salario * 0.06)}</p>
-                <p><strong>📑 Contabilidade:</strong> R$ 369,00</p>
-                <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
-                <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
-                <p className="text-green-700 font-semibold text-center mt-3">💬 \"Transforme tributos em salário no seu bolso.\"</p>
-                <p className="text-green-700 font-semibold text-center">💬 \"Ganhe até 28% a mais por mês sem depender do governo.\"</p>
-              </div>
-
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold mb-2">📚 Comparativo de Aposentadoria</h3>
-                <p><strong>📉 CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
-                <p><strong>📊 Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-                <p><strong>🏦 PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
-                <p className="text-blue-700 font-semibold text-center mt-3">💬 \"Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa.\"</p>
-                <p className="text-blue-700 font-semibold text-center">💬 \"Invista o que antes ia para o governo em sua aposentadoria.\"</p>
-              </div>
-            </div>
-
-            {/* Gráfico de Risco */}
-            <div className="bg-white p-4 rounded shadow mt-6">
-              <h2 className="text-xl font-bold mb-4">🛡️ Gráfico de Risco</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dadosGrafico}>
-                  <XAxis dataKey="name" />
-                  <Tooltip formatter={(v) => f(v)} />
-                  <Legend />
-                  <Bar dataKey="valor">
-                    {dadosGrafico.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.cor} />
-                    ))}
-                    <LabelList dataKey="valor" position="top" formatter={(value) => f(value)} />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Botão PDF */}
           <div className="text-center">
             <button onClick={gerarPDF} className="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
               📄 Gerar PDF do Relatório
