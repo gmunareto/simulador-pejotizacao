@@ -118,13 +118,6 @@ export default function SimuladorPejotizacao() {
             </div>
 
             <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-              <h2 className="text-2xl font-bold text-indigo-800 mb-4">👤 Visão do Colaborador</h2>
-              <p><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-              <p><strong>💰 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-              <p><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
               <h3 className="text-xl font-semibold text-amber-700 mb-4">📊 Gráfico de Risco</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={dadosGrafico}>
@@ -139,6 +132,13 @@ export default function SimuladorPejotizacao() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+              <h2 className="text-2xl font-bold text-indigo-800 mb-4">👤 Visão do Colaborador</h2>
+              <p><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+              <p><strong>💰 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+              <p><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
             </div>
 
             <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
