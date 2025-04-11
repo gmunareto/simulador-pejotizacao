@@ -106,34 +106,48 @@ export default function SimuladorPejotizacao() {
 
       {resultado && (
         <>
-          <div ref={pdfRef} className="mt-8 bg-white p-6 rounded shadow space-y-6">
+          <div ref={pdfRef} className="mt-8 space-y-6">
+            <div className="bg-slate-50 p-6 rounded-xl shadow-md border border-slate-200">
+              <h2 className="text-2xl font-bold text-blue-800 mb-4">🏢 Visão da Empresa</h2>
+              <p><strong>Custo CLT:</strong> {f(resultado.custoCLT)}</p>
+              <p><strong>Custo PJ:</strong> {f(resultado.custoPJ)}</p>
+              <p><strong>Economia mensal:</strong> {f(resultado.economiaMensal)}</p>
+              <p><strong>Economia total:</strong> {f(resultado.economiaTotal)}</p>
+              <p><strong>Seguro estimado:</strong> {f(resultado.seguro)}</p>
+              <p className="text-green-700 font-semibold"><strong>Economia líquida (com seguro):</strong> {f(resultado.economiaLiquida)}</p>
+            </div>
 
-            <h2 className="text-2xl font-bold">👤 Visão do Colaborador</h2>
-            <p><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-            <p><strong>💰 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-            <p><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+              <h2 className="text-2xl font-bold text-indigo-800 mb-4">👤 Visão do Colaborador</h2>
+              <p><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+              <p><strong>💰 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+              <p><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
+            </div>
 
-            <h3 className="text-xl font-semibold pt-4">📊 Gráfico de Risco</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dadosGrafico}>
-                <XAxis dataKey="name" />
-                <Tooltip formatter={f} />
-                <Legend />
-                <Bar dataKey="valor">
-                  {dadosGrafico.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.cor} />
-                  ))}
-                  <LabelList dataKey="valor" formatter={f} position="top" />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+              <h3 className="text-xl font-semibold text-amber-700 mb-4">📊 Gráfico de Risco</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dadosGrafico}>
+                  <XAxis dataKey="name" />
+                  <Tooltip formatter={f} />
+                  <Legend />
+                  <Bar dataKey="valor">
+                    {dadosGrafico.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.cor} />
+                    ))}
+                    <LabelList dataKey="valor" formatter={f} position="top" />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-            <h3 className="text-xl font-semibold pt-4">📘 Comparativo de Aposentadoria</h3>
-            <p><strong>Contribuição mensal INSS:</strong> {f(resultado.contribuicaoINSSMensal)}</p>
-            <p><strong>Total INSS (35 anos):</strong> {f(resultado.totalINSS)}</p>
-            <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-            <p><strong>Acúmulo estimado Previdência Privada:</strong> {f(resultado.acumuladoPrivado)}</p>
-
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+              <h3 className="text-xl font-semibold text-emerald-700 mb-4">📘 Comparativo de Aposentadoria</h3>
+              <p><strong>Contribuição mensal INSS:</strong> {f(resultado.contribuicaoINSSMensal)}</p>
+              <p><strong>Total INSS (35 anos):</strong> {f(resultado.totalINSS)}</p>
+              <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+              <p><strong>Acúmulo estimado Previdência Privada:</strong> {f(resultado.acumuladoPrivado)}</p>
+            </div>
           </div>
 
           <div className="text-center">
