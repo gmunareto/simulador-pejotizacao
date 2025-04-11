@@ -106,14 +106,14 @@ export default function SimuladorPejotizacao() {
 
       {resultado && (
         <>
-          <div ref={pdfRef} className="mt-6 bg-white p-4 rounded shadow space-y-4">
-            <h2 className="text-xl font-semibold">📄 Relatório Gerado</h2>
-            <p><strong>Economia total:</strong> {f(resultado.economiaTotal)}</p>
-            <p><strong>Economia líquida (com seguro):</strong> {f(resultado.economiaLiquida)}</p>
-            <p><strong>Ganho mensal extra por colaborador:</strong> {f(resultado.ganhoMensalExtra)}</p>
-            <p><strong>Estimativa aposentadoria INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-            <p><strong>Acúmulo previdência privada:</strong> {f(resultado.acumuladoPrivado)}</p>
+          <div ref={pdfRef} className="mt-8 bg-white p-6 rounded shadow space-y-6">
 
+            <h2 className="text-2xl font-bold">👤 Visão do Colaborador</h2>
+            <p><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+            <p><strong>💰 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+            <p><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
+
+            <h3 className="text-xl font-semibold pt-4">📊 Gráfico de Risco</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dadosGrafico}>
                 <XAxis dataKey="name" />
@@ -127,6 +127,13 @@ export default function SimuladorPejotizacao() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+
+            <h3 className="text-xl font-semibold pt-4">📘 Comparativo de Aposentadoria</h3>
+            <p><strong>Contribuição mensal INSS:</strong> {f(resultado.contribuicaoINSSMensal)}</p>
+            <p><strong>Total INSS (35 anos):</strong> {f(resultado.totalINSS)}</p>
+            <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+            <p><strong>Acúmulo estimado Previdência Privada:</strong> {f(resultado.acumuladoPrivado)}</p>
+
           </div>
 
           <div className="text-center">
