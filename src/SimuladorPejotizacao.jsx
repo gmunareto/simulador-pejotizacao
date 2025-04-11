@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Legend, Cell, LabelList } from "recharts";
+import html2pdf from "html2pdf.js";
 
 export default function SimuladorPejotizacao() {
   const [salario, setSalario] = useState(10000);
   const [colaboradores, setColaboradores] = useState(10);
   const [meses, setMeses] = useState(12);
   const [resultado, setResultado] = useState(null);
+  const pdfRef = useRef();
 
   const calcular = () => {
     const totalSalario = salario * colaboradores;
@@ -63,6 +65,17 @@ export default function SimuladorPejotizacao() {
     });
   };
 
+  const gerarPDF = () => {
+    const opt = {
+      margin: 0.5,
+      filename: 'relatorio-simulador-pejotizacao.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().from(pdfRef.current).set(opt).save();
+  };
+
   const f = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   const dadosGrafico = resultado ? [
@@ -77,87 +90,89 @@ export default function SimuladorPejotizacao() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Salário médio:</label>
-          <input type="number" value={salario} onChange={e => setSalario(+e.target.value)}
-            className="w-full px-3 py-2 border rounded" />
+          <label className="block text-sm font-medium mb-1">Salário médio (R$):</label>
+          <input type="number" value={salario} onChange={e => setSalario(+e.target.value)} className="w-full px-3 py-2 border rounded" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Colaboradores:</label>
-          <input type="number" value={colaboradores} onChange={e => setColaboradores(+e.target.value)}
-            className="w-full px-3 py-2 border rounded" />
+          <label className="block text-sm font-medium mb-1">Número de colaboradores:</label>
+          <input type="number" value={colaboradores} onChange={e => setColaboradores(+e.target.value)} className="w-full px-3 py-2 border rounded" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Meses:</label>
-          <input type="number" value={meses} onChange={e => setMeses(+e.target.value)}
-            className="w-full px-3 py-2 border rounded" />
+          <label className="block text-sm font-medium mb-1">Período de permanência na empresa (meses):</label>
+          <input type="number" value={meses} onChange={e => setMeses(+e.target.value)} className="w-full px-3 py-2 border rounded" />
         </div>
       </div>
 
-      <button onClick={calcular} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-        Calcular
-      </button>
+      <button onClick={calcular} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Calcular</button>
 
       {resultado && (
-        <div className="space-y-6 mt-6">
-
-          {/* Visão da Empresa */}
-          <div className="bg-white p-4 rounded shadow text-base">
-            <h2 className="text-2xl font-bold mb-4">🏢 Visão da Empresa</h2>
-            <p className="text-lg"><strong>💰 Custo CLT:</strong> {f(resultado.custoCLT)}</p>
-            <p className="text-lg"><strong>💼 Custo PJ:</strong> {f(resultado.custoPJ)}</p>
-            <p className="text-lg"><strong>📉 Economia mensal:</strong> {f(resultado.economiaMensal)}</p>
-            <p className="text-lg"><strong>📆 Economia no período:</strong> {f(resultado.economiaTotal)}</p>
-            <p className="text-lg"><strong>🛡️ Custo estimado do seguro:</strong> {f(resultado.seguro)}</p>
-            <p className="text-lg font-semibold"><strong>📈 Economia líquida real:</strong> {f(resultado.economiaLiquida)}</p>
-          </div>
-
-          {/* Visão do Colaborador */}
-          <div className="bg-white p-4 rounded shadow text-base">
-            <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
-            <p className="text-lg"><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
-            <p className="text-lg"><strong>💸 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
-            <p className="text-lg"><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
-
-            <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">📊 Composição do ganho PJ:</h3>
-              <p><strong>📥 Receita bruta:</strong> {f(salario)}</p>
-              <p><strong>📤 Impostos (6%):</strong> {f(salario * 0.06)}</p>
-              <p><strong>📑 Contabilidade:</strong> {f(369)}</p>
-              <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
-              <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
-              <p className="text-base text-green-700 mt-3">💬 "Transforme tributos em salário no seu bolso."</p>
-              <p className="text-base text-green-700">💬 "Ganhe até 28% a mais por mês sem depender do governo."</p>
+        <>
+          <div className="space-y-6 mt-6" ref={pdfRef}>
+            {/* Visão da Empresa */}
+            <div className="bg-white p-4 rounded shadow text-base">
+              <h2 className="text-2xl font-bold mb-4">🏢 Visão da Empresa</h2>
+              <p className="text-lg"><strong>💰 Custo CLT:</strong> {f(resultado.custoCLT)}</p>
+              <p className="text-lg"><strong>💼 Custo PJ:</strong> {f(resultado.custoPJ)}</p>
+              <p className="text-lg"><strong>📉 Economia mensal:</strong> {f(resultado.economiaMensal)}</p>
+              <p className="text-lg"><strong>📆 Economia no período:</strong> {f(resultado.economiaTotal)}</p>
+              <p className="text-lg"><strong>🛡️ Custo estimado do seguro:</strong> {f(resultado.seguro)}</p>
+              <p className="text-lg font-semibold"><strong>📈 Economia líquida real:</strong> {f(resultado.economiaLiquida)}</p>
             </div>
 
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold mb-2">📚 Comparativo de Aposentadoria</h3>
-              <p><strong>📉 CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
-              <p><strong>📊 Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-              <p><strong>🏦 PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
-              <p className="text-base text-blue-700 mt-3">💬 "Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa."</p>
-              <p className="text-base text-blue-700">💬 "Invista o que antes ia para o governo em sua aposentadoria."</p>
+            {/* Visão do Colaborador */}
+            <div className="bg-white p-4 rounded shadow text-base">
+              <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
+              <p className="text-lg"><strong>💼 Salário líquido CLT:</strong> {f(resultado.salarioLiquidoCLT)} / mês</p>
+              <p className="text-lg"><strong>💸 Ganho líquido PJ:</strong> {f(resultado.ganhoPJMensal)} / mês</p>
+              <p className="text-lg"><strong>📈 Diferença mensal:</strong> {f(resultado.ganhoMensalExtra)}</p>
+
+              <div className="mt-4">
+                <h3 className="text-xl font-semibold mb-2">📊 Composição do ganho PJ:</h3>
+                <p><strong>📥 Receita bruta:</strong> {f(salario)}</p>
+                <p><strong>📤 Impostos (6%):</strong> {f(salario * 0.06)}</p>
+                <p><strong>📑 Contabilidade:</strong> R$ 369,00</p>
+                <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
+                <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
+                <p className="text-green-700 font-semibold text-center mt-3">💬 \"Transforme tributos em salário no seu bolso.\"</p>
+                <p className="text-green-700 font-semibold text-center">💬 \"Ganhe até 28% a mais por mês sem depender do governo.\"</p>
+              </div>
+
+              <div className="mt-6">
+                <h3 className="text-xl font-semibold mb-2">📚 Comparativo de Aposentadoria</h3>
+                <p><strong>📉 CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
+                <p><strong>📊 Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+                <p><strong>🏦 PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
+                <p className="text-blue-700 font-semibold text-center mt-3">💬 \"Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa.\"</p>
+                <p className="text-blue-700 font-semibold text-center">💬 \"Invista o que antes ia para o governo em sua aposentadoria.\"</p>
+              </div>
+            </div>
+
+            {/* Gráfico de Risco */}
+            <div className="bg-white p-4 rounded shadow mt-6">
+              <h2 className="text-xl font-bold mb-4">🛡️ Gráfico de Risco</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dadosGrafico}>
+                  <XAxis dataKey="name" />
+                  <Tooltip formatter={(v) => f(v)} />
+                  <Legend />
+                  <Bar dataKey="valor">
+                    {dadosGrafico.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.cor} />
+                    ))}
+                    <LabelList dataKey="valor" position="top" formatter={(value) => f(value)} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Gráfico de Risco */}
-          <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-xl font-bold mb-4">🛡️ Gráfico de Risco</h2>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dadosGrafico}>
-                <XAxis dataKey="name" />
-                <Tooltip formatter={(v) => f(v)} />
-                <Legend />
-                <Bar dataKey="valor">
-                  {dadosGrafico.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.cor} />
-                  ))}
-                  <LabelList dataKey="valor" content={({ value }) => f(value)} position="top" />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          {/* Botão PDF */}
+          <div className="text-center">
+            <button onClick={gerarPDF} className="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+              📄 Gerar PDF do Relatório
+            </button>
           </div>
-
-        </div>
+        </>
       )}
     </div>
   );
