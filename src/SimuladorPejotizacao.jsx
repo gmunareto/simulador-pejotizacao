@@ -99,7 +99,18 @@ export default function SimuladorPejotizacao() {
 
       {resultado && (
         <div className="space-y-6 mt-6">
-          
+
+          {/* Visão da Empresa */}
+          <div className="bg-white p-4 rounded shadow text-base">
+            <h2 className="text-2xl font-bold mb-4">🏢 Visão da Empresa</h2>
+            <p className="text-lg"><strong>💰 Custo CLT:</strong> {f(resultado.custoCLT)}</p>
+            <p className="text-lg"><strong>💼 Custo PJ:</strong> {f(resultado.custoPJ)}</p>
+            <p className="text-lg"><strong>📉 Economia mensal:</strong> {f(resultado.economiaMensal)}</p>
+            <p className="text-lg"><strong>📆 Economia no período:</strong> {f(resultado.economiaTotal)}</p>
+            <p className="text-lg"><strong>🛡️ Custo estimado do seguro:</strong> {f(resultado.seguro)}</p>
+            <p className="text-lg font-semibold"><strong>📈 Economia líquida real:</strong> {f(resultado.economiaLiquida)}</p>
+          </div>
+
           {/* Visão do Colaborador */}
           <div className="bg-white p-4 rounded shadow text-base">
             <h2 className="text-2xl font-bold mb-4">👤 Visão do Colaborador (1 colaborador)</h2>
@@ -114,8 +125,8 @@ export default function SimuladorPejotizacao() {
               <p><strong>📑 Contabilidade:</strong> {f(369)}</p>
               <p><strong>🏦 Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
               <p><strong>💰 Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
-              <p className="text-base text-green-700 mt-3">💬 "Transforme tributos em salário no seu bolso."</p>
-              <p className="text-base text-green-700">💬 "Ganhe até 28% a mais por mês sem depender do governo."</p>
+              <p className="text-base text-green-700 mt-3">💬 \"Transforme tributos em salário no seu bolso.\"</p>
+              <p className="text-base text-green-700">💬 \"Ganhe até 28% a mais por mês sem depender do governo.\"</p>
             </div>
 
             <div className="mt-6">
@@ -123,8 +134,8 @@ export default function SimuladorPejotizacao() {
               <p><strong>📉 CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
               <p><strong>📊 Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
               <p><strong>🏦 PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
-              <p className="text-base text-blue-700 mt-3">💬 "Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa."</p>
-              <p className="text-base text-blue-700">💬 "Invista o que antes ia para o governo em sua aposentadoria."</p>
+              <p className="text-base text-blue-700 mt-3">💬 \"Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa.\"</p>
+              <p className="text-base text-blue-700">💬 \"Invista o que antes ia para o governo em sua aposentadoria.\"</p>
             </div>
           </div>
 
@@ -145,6 +156,7 @@ export default function SimuladorPejotizacao() {
               </BarChart>
             </ResponsiveContainer>
           </div>
+
         </div>
       )}
     </div>
