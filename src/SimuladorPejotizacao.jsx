@@ -106,6 +106,29 @@ export default function SimuladorPejotizacao() {
 
       {resultado && (
         <>
+          <div ref={pdfRef} className="mt-6 bg-white p-4 rounded shadow space-y-4">
+            <h2 className="text-xl font-semibold">📄 Relatório Gerado</h2>
+            <p><strong>Economia total:</strong> {f(resultado.economiaTotal)}</p>
+            <p><strong>Economia líquida (com seguro):</strong> {f(resultado.economiaLiquida)}</p>
+            <p><strong>Ganho mensal extra por colaborador:</strong> {f(resultado.ganhoMensalExtra)}</p>
+            <p><strong>Estimativa aposentadoria INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+            <p><strong>Acúmulo previdência privada:</strong> {f(resultado.acumuladoPrivado)}</p>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={dadosGrafico}>
+                <XAxis dataKey="name" />
+                <Tooltip formatter={f} />
+                <Legend />
+                <Bar dataKey="valor">
+                  {dadosGrafico.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.cor} />
+                  ))}
+                  <LabelList dataKey="valor" formatter={f} position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
           <div className="text-center">
             <button onClick={gerarPDF} className="mt-6 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
               📄 Gerar PDF do Relatório
