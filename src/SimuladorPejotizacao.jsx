@@ -139,4 +139,22 @@ export default function SimuladorPejotizacao() {
               <p><strong>Impostos (6%):</strong> {f((salario * 0.06))}</p>
               <p><strong>Contabilidade:</strong> {f(369)}</p>
               <p><strong>Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
-              <p><strong>Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</
+              <p><strong>Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
+              <p className="text-sm text-green-700 mt-2">"Transforme tributos em salário no seu bolso."</p>
+              <p className="text-sm text-green-700">"Ganhe até 28% a mais por mês sem depender do governo."</p>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="text-lg font-medium">🏦 Comparativo de Aposentadoria</h3>
+              <p><strong>CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
+              <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
+              <p><strong>PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
+              <p className="text-sm text-blue-700 mt-2">"Com a pejotização, você pode acumular mais de R$ 1 milhão com a contribuição da empresa."</p>
+              <p className="text-sm text-blue-700">"Invista o que antes ia para o governo em sua aposentadoria."</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
