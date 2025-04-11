@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Legend, Cell, LabelList } from "recharts";
 
 export default function SimuladorPejotizacao() {
   const [salario, setSalario] = useState(10000);
@@ -47,7 +47,6 @@ export default function SimuladorPejotizacao() {
 
     const economiaLiquida = economiaTotal - seguro;
 
-    // Aposentadoria estimativas
     const contribuicaoINSSMensal = Math.min(salario * 0.14, 908.86);
     const tempoContribuicao = 35;
     const totalINSS = contribuicaoINSSMensal * 12 * tempoContribuicao;
@@ -116,13 +115,13 @@ export default function SimuladorPejotizacao() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={dadosGrafico}>
                 <XAxis dataKey="name" />
-                <YAxis tickFormatter={f} />
                 <Tooltip formatter={(v) => f(v)} />
                 <Legend />
                 <Bar dataKey="valor">
                   {dadosGrafico.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.cor} />
                   ))}
+                  <LabelList dataKey="valor" content={({ value }) => f(value)} position="top" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -140,18 +139,4 @@ export default function SimuladorPejotizacao() {
               <p><strong>Impostos (6%):</strong> {f((salario * 0.06))}</p>
               <p><strong>Contabilidade:</strong> {f(369)}</p>
               <p><strong>Previdência recebida:</strong> {f(resultado.contribuicaoPrevidenciaPrivada)}</p>
-              <p><strong>Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</p>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="text-lg font-medium">🏦 Comparativo de Aposentadoria</h3>
-              <p><strong>CLT (INSS):</strong> Contribuição mensal de {f(resultado.contribuicaoINSSMensal)} por 35 anos = {f(resultado.totalINSS)}</p>
-              <p><strong>Estimativa de aposentadoria via INSS:</strong> {f(resultado.estimativaAposentadoriaINSS)}</p>
-              <p><strong>PJ (Previdência privada):</strong> Acúmulo estimado com {f(resultado.contribuicaoPrevidenciaPrivada)}/mês = <strong>{f(resultado.acumuladoPrivado)}</strong></p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+              <p><strong>Ganho líquido real:</strong> {f(resultado.ganhoPJMensal)}</
